@@ -1,6 +1,6 @@
 {
   "name": "react-another-signature-pad",
-  "version": "0.9.0",
+  "version": "0.9.1",
   "description": "React implementation of signature pad library",
   "keywords": [
     "react",
@@ -17,7 +17,7 @@
     "type": "git",
     "url": "https://github.com/danielrearden/react-another-signature-pad"
   },
-  "main": "dist/react-another-signature-pad.min.js",
+  "main": "dist/index.js",
   "scripts": {
     "build": "gulp build"
   },
@@ -31,6 +31,6 @@
     "babel-preset-react": "^6.24.1",
     "gulp": "^3.9.1",
     "gulp-babel": "^6.1.2",
-    "gulp-sourcemaps": "^2.6.0",
+    "gulp-sourcemaps": "^2.6.0"
   }
 }
