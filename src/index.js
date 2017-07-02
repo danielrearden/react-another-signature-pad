@@ -12,6 +12,7 @@ class Signature extends React.Component {
     this.style.height = this.style.height || '100%';
     this.style.msTouchAction = 'none';
     this.style.touchAction = 'none';
+    this.clearVal = 0;
 
     this.handleMouseDown = this.handleMouseDown.bind(this);
     this.handleMouseMove = this.handleMouseMove.bind(this);
@@ -56,7 +57,8 @@ class Signature extends React.Component {
     this.clear();
   }
   componentWillReceiveProps(nextProps) {
-    if (nextProps.clear) {
+    if (nextProps.clear && nextProps.clear !== this.clearVal) {
+      this.clearVal = nextProps.clear;
       this.clear();
     }
   }

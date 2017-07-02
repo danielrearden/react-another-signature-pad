@@ -64,7 +64,8 @@ All the options for customizing Signature Pad are available as props
 <dt>trim</dt>
 <dd>(bool) Set to <code>true</code> to trim whitespace from canvas. Defaults to <code>false</code>.</dd>
 <dt>clear</dt>
-<dd>(bool) Every time this prop is set to <code>true</code>, the canvas is cleared, even if it was already true.</dd>
+<dd>(int) Every time this prop is set to a new value, the canvas is cleared. For example, you can set the value to 
+<code>Date.now()</code>.</dd>
 <dt>onChange</dt>
 <dd>(function) Function called every time the canvas changes. It's passed a single boolean that indicates if the canvas 
 is empty.</dd>

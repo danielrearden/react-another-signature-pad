@@ -41,6 +41,7 @@ var Signature = function (_React$Component) {
     _this.style.height = _this.style.height || '100%';
     _this.style.msTouchAction = 'none';
     _this.style.touchAction = 'none';
+    _this.clearVal = 0;
 
     _this.handleMouseDown = _this.handleMouseDown.bind(_this);
     _this.handleMouseMove = _this.handleMouseMove.bind(_this);
@@ -90,7 +91,8 @@ var Signature = function (_React$Component) {
   }, {
     key: 'componentWillReceiveProps',
     value: function componentWillReceiveProps(nextProps) {
-      if (nextProps.clear) {
+      if (nextProps.clear && nextProps.clear !== this.clearVal) {
+        this.clearVal = nextProps.clear;
         this.clear();
       }
     }
