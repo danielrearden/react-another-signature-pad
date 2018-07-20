@@ -46,7 +46,6 @@ var Signature = function (_React$Component) {
     _this.handleMouseDown = _this.handleMouseDown.bind(_this);
     _this.handleMouseMove = _this.handleMouseMove.bind(_this);
     _this.handleMouseUp = _this.handleMouseUp.bind(_this);
-    _this.handleMouseLeave = _this.handleMouseLeave.bind(_this);
     _this.handleTouchStart = _this.handleTouchStart.bind(_this);
     _this.handleTouchMove = _this.handleTouchMove.bind(_this);
     _this.handleTouchEnd = _this.handleTouchEnd.bind(_this);
@@ -68,6 +67,9 @@ var Signature = function (_React$Component) {
   _createClass(Signature, [{
     key: 'componentDidMount',
     value: function componentDidMount() {
+      // Listen to mouse up events from anywhere (not just the canvas)
+      document.addEventListener('mouseup', this.handleMouseUp);
+
       this.velocityFilterWeight = this.props.velocityFilterWeight || 0.7;
       this.minWidth = this.props.minWidth || 0.5;
       this.maxWidth = this.props.maxWidth || 2.5;
@@ -97,6 +99,11 @@ var Signature = function (_React$Component) {
       }
     }
   }, {
+    key: 'componentWillUnmount',
+    value: function componentWillUnmount() {
+      document.removeEventListener('mouseup', this.handleMouseUp);
+    }
+  }, {
     key: 'handleMouseDown',
     value: function handleMouseDown(event) {
       if (event.button === 0) {
@@ -114,14 +121,6 @@ var Signature = function (_React$Component) {
   }, {
     key: 'handleMouseUp',
     value: function handleMouseUp(event) {
-      if (event.button === 0 && this.mouseButtonDown) {
-        this.mouseButtonDown = false;
-        this.strokeEnd(event);
-      }
-    }
-  }, {
-    key: 'handleMouseLeave',
-    value: function handleMouseLeave(event) {
       if (event.button === 0 && this.mouseButtonDown) {
         this.mouseButtonDown = false;
         this.strokeEnd(event);
@@ -366,8 +365,6 @@ var Signature = function (_React$Component) {
         },
         onMouseDown: this.handleMouseDown,
         onMouseMove: this.handleMouseMove,
-        onMouseUp: this.handleMouseUp,
-        onMouseLeave: this.handleMouseLeave,
         onTouchStart: this.handleTouchStart,
         onTouchMove: this.handleTouchMove,
         onTouchEnd: this.handleTouchEnd
