@@ -32,6 +32,7 @@ class Signature extends React.Component {
     this.drawDot = this.drawDot.bind(this);
     this.clear = this.clear.bind(this);
     this.reset = this.reset.bind(this);
+    this.fromDataURL = this.fromDataURL.bind(this);
   }
 
   componentDidMount() {
@@ -67,6 +68,23 @@ class Signature extends React.Component {
 
   componentWillUnmount() {
     document.removeEventListener('mouseup', this.handleMouseUp);
+  }
+
+  fromDataURL(dataUrl, options = {}, callback = null) {
+    this.reset();
+    const image = new Image();
+    const ratio = options.ratio || window.devicePixelRatio || 1;
+    const width = options.width || (this.canvas.width / ratio);
+    const height = options.height || (this.canvas.height / ratio);
+
+    image.onload = () => {
+      this.ctx.drawImage(image, 0, 0, width, height);
+      if (callback) { callback(); }
+    };
+    image.onerror = (error) => {
+      if (callback) { callback(error); }
+    };
+    image.src = dataUrl;
   }
 
   handleMouseDown(event) {
