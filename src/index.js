@@ -17,7 +17,6 @@ class Signature extends React.Component {
     this.handleMouseDown = this.handleMouseDown.bind(this);
     this.handleMouseMove = this.handleMouseMove.bind(this);
     this.handleMouseUp = this.handleMouseUp.bind(this);
-    this.handleMouseLeave = this.handleMouseLeave.bind(this);
     this.handleTouchStart = this.handleTouchStart.bind(this);
     this.handleTouchMove = this.handleTouchMove.bind(this);
     this.handleTouchEnd = this.handleTouchEnd.bind(this);
@@ -33,9 +32,13 @@ class Signature extends React.Component {
     this.drawDot = this.drawDot.bind(this);
     this.clear = this.clear.bind(this);
     this.reset = this.reset.bind(this);
+    this.fromDataURL = this.fromDataURL.bind(this);
   }
 
   componentDidMount() {
+    // Listen to mouse up events from anywhere (not just the canvas)
+    document.addEventListener('mouseup', this.handleMouseUp);
+
     this.velocityFilterWeight = this.props.velocityFilterWeight || 0.7;
     this.minWidth = this.props.minWidth || 0.5;
     this.maxWidth = this.props.maxWidth || 2.5;
@@ -63,6 +66,27 @@ class Signature extends React.Component {
     }
   }
 
+  componentWillUnmount() {
+    document.removeEventListener('mouseup', this.handleMouseUp);
+  }
+
+  fromDataURL(dataUrl, options = {}, callback = null) {
+    this.reset();
+    const image = new Image();
+    const ratio = options.ratio || window.devicePixelRatio || 1;
+    const width = options.width || (this.canvas.width / ratio);
+    const height = options.height || (this.canvas.height / ratio);
+
+    image.onload = () => {
+      this.ctx.drawImage(image, 0, 0, width, height);
+      if (callback) { callback(); }
+    };
+    image.onerror = (error) => {
+      if (callback) { callback(error); }
+    };
+    image.src = dataUrl;
+  }
+
   handleMouseDown(event) {
     if (event.button === 0) {
       this.mouseButtonDown = true;
@@ -77,13 +101,6 @@ class Signature extends React.Component {
   }
 
   handleMouseUp(event) {
-    if (event.button === 0 && this.mouseButtonDown) {
-      this.mouseButtonDown = false;
-      this.strokeEnd(event);
-    }
-  }
-
-  handleMouseLeave(event) {
     if (event.button === 0 && this.mouseButtonDown) {
       this.mouseButtonDown = false;
       this.strokeEnd(event);
@@ -310,8 +327,6 @@ class Signature extends React.Component {
         ref={(canvas) => { this.canvas = canvas; }}
         onMouseDown={this.handleMouseDown}
         onMouseMove={this.handleMouseMove}
-        onMouseUp={this.handleMouseUp}
-        onMouseLeave={this.handleMouseLeave}
         onTouchStart={this.handleTouchStart}
         onTouchMove={this.handleTouchMove}
         onTouchEnd={this.handleTouchEnd}

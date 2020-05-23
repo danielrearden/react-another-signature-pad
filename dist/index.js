@@ -46,7 +46,6 @@ var Signature = function (_React$Component) {
     _this.handleMouseDown = _this.handleMouseDown.bind(_this);
     _this.handleMouseMove = _this.handleMouseMove.bind(_this);
     _this.handleMouseUp = _this.handleMouseUp.bind(_this);
-    _this.handleMouseLeave = _this.handleMouseLeave.bind(_this);
     _this.handleTouchStart = _this.handleTouchStart.bind(_this);
     _this.handleTouchMove = _this.handleTouchMove.bind(_this);
     _this.handleTouchEnd = _this.handleTouchEnd.bind(_this);
@@ -62,12 +61,16 @@ var Signature = function (_React$Component) {
     _this.drawDot = _this.drawDot.bind(_this);
     _this.clear = _this.clear.bind(_this);
     _this.reset = _this.reset.bind(_this);
+    _this.fromDataURL = _this.fromDataURL.bind(_this);
     return _this;
   }
 
   _createClass(Signature, [{
     key: 'componentDidMount',
     value: function componentDidMount() {
+      // Listen to mouse up events from anywhere (not just the canvas)
+      document.addEventListener('mouseup', this.handleMouseUp);
+
       this.velocityFilterWeight = this.props.velocityFilterWeight || 0.7;
       this.minWidth = this.props.minWidth || 0.5;
       this.maxWidth = this.props.maxWidth || 2.5;
@@ -97,6 +100,38 @@ var Signature = function (_React$Component) {
       }
     }
   }, {
+    key: 'componentWillUnmount',
+    value: function componentWillUnmount() {
+      document.removeEventListener('mouseup', this.handleMouseUp);
+    }
+  }, {
+    key: 'fromDataURL',
+    value: function fromDataURL(dataUrl) {
+      var _this2 = this;
+
+      var options = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
+      var callback = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : null;
+
+      this.reset();
+      var image = new Image();
+      var ratio = options.ratio || window.devicePixelRatio || 1;
+      var width = options.width || this.canvas.width / ratio;
+      var height = options.height || this.canvas.height / ratio;
+
+      image.onload = function () {
+        _this2.ctx.drawImage(image, 0, 0, width, height);
+        if (callback) {
+          callback();
+        }
+      };
+      image.onerror = function (error) {
+        if (callback) {
+          callback(error);
+        }
+      };
+      image.src = dataUrl;
+    }
+  }, {
     key: 'handleMouseDown',
     value: function handleMouseDown(event) {
       if (event.button === 0) {
@@ -114,14 +149,6 @@ var Signature = function (_React$Component) {
   }, {
     key: 'handleMouseUp',
     value: function handleMouseUp(event) {
-      if (event.button === 0 && this.mouseButtonDown) {
-        this.mouseButtonDown = false;
-        this.strokeEnd(event);
-      }
-    }
-  }, {
-    key: 'handleMouseLeave',
-    value: function handleMouseLeave(event) {
       if (event.button === 0 && this.mouseButtonDown) {
         this.mouseButtonDown = false;
         this.strokeEnd(event);
@@ -356,18 +383,16 @@ var Signature = function (_React$Component) {
   }, {
     key: 'render',
     value: function render() {
-      var _this2 = this;
+      var _this3 = this;
 
       return _react2.default.createElement('canvas', {
         style: this.style,
         className: this.props.className,
         ref: function ref(canvas) {
-          _this2.canvas = canvas;
+          _this3.canvas = canvas;
         },
         onMouseDown: this.handleMouseDown,
         onMouseMove: this.handleMouseMove,
-        onMouseUp: this.handleMouseUp,
-        onMouseLeave: this.handleMouseLeave,
         onTouchStart: this.handleTouchStart,
         onTouchMove: this.handleTouchMove,
         onTouchEnd: this.handleTouchEnd
